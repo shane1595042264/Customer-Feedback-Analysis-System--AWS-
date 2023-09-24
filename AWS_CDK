@@ -1,0 +1,27 @@
+from aws_cdk import (
+    aws_lambda as _lambda,
+    aws_rds as rds,
+    core
+)
+
+class MyStack(core.Stack):
+    def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
+        super().__init__(scope, id, **kwargs)
+
+        # Lambda function
+        my_function = _lambda.Function(
+            self, 'MyLambdaFunction',
+            runtime=_lambda.Runtime.PYTHON_3_8,
+            code=_lambda.Code.asset('lambda'),
+            handler='handler.main'
+        )
+
+        # RDS database
+        database = rds.DatabaseInstance(
+            self, 'MyDatabase',
+            engine=rds.DatabaseInstanceEngine.MYSQL,
+            master_username='admin',
+            instance_type=ec2.InstanceType('t2.micro'),
+            removal_policy=core.RemovalPolicy.DESTROY,
+            delete_automated_backups=True
+        )
